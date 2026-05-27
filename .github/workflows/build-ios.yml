@@ -47,7 +47,7 @@ jobs:
           xcodebuild \
             -workspace ios/$SAFE_NAME.xcworkspace \
             -scheme $SAFE_NAME \
-            -configuration Debug clean archive \
+            -configuration Release \
             -sdk iphoneos \
             -archivePath build/$SAFE_NAME.xcarchive \
             CODE_SIGNING_ALLOWED=NO \

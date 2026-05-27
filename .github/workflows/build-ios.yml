@@ -30,21 +30,10 @@ jobs:
           cd ios
           pod install
 
-      - name: Read app name from package.json
-        id: appname
-        run: |
-          RAW_NAME=$(jq -r .name package.json)
-          SAFE_NAME=$(echo $RAW_NAME | tr -cd '[:alnum:]_')
-
-          # 写入环境变量
-          echo "APP_NAME=$SAFE_NAME" >> $GITHUB_ENV
-
-          # 关键：添加这两行调试打印
-          echo "DEBUG: RAW_NAME is '$RAW_NAME'"
-          echo "DEBUG: SAFE_NAME (APP_NAME) is '$SAFE_NAME'"
-
       - name: Build iOS archive (unsigned)
         run: |
+          RAW_NAME=$(jq -r .name package.json)
+
           xcodebuild \
             -workspace ios/$RAW_NAME.xcworkspace \
             -scheme $RAW_NAME \
@@ -57,6 +46,8 @@ jobs:
 
       - name: Export IPA
         run: |
+          RAW_NAME=$(jq -r .name package.json)
+
           cd build/$RAW_NAME.xcarchive/Products/Applications
           mkdir -p Payload
           cp -r $RAW_NAME.app Payload/

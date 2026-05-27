@@ -46,25 +46,25 @@ jobs:
       - name: Build iOS archive (unsigned)
         run: |
           xcodebuild \
-            -workspace ios/$APP_NAME.xcworkspace \
-            -scheme $APP_NAME \
+            -workspace ios/$RAW_NAME.xcworkspace \
+            -scheme $RAW_NAME \
             -configuration Debug clean archive \
             -sdk iphoneos \
-            -archivePath build/$APP_NAME.xcarchive \
+            -archivePath build/$RAW_NAME.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY=""
 
       - name: Export IPA
         run: |
-          cd build/$APP_NAME.xcarchive/Products/Applications
+          cd build/$RAW_NAME.xcarchive/Products/Applications
           mkdir -p Payload
-          cp -r $APP_NAME.app Payload/
-          zip -r $APP_NAME.ipa Payload
-          mv $APP_NAME.ipa $GITHUB_WORKSPACE/
+          cp -r $RAW_NAME.app Payload/
+          zip -r $$RAW_NAME.ipa Payload
+          mv $$RAW_NAME.ipa $GITHUB_WORKSPACE/
 
       - name: Upload .ipa
         uses: actions/upload-artifact@v4
         with:
-          name: solarhez-app-ios-onsign
-          path: ios/solarhez-app.ipa
+          name: $RAW_NAME-ios-onsign
+          path: ios/$RAW_NAME.ipa

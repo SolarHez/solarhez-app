@@ -30,6 +30,15 @@ jobs:
           cd ios
           pod install
 
+      - name: Locate Workspace
+        run: |
+          echo "Scanning ios directory for workspace files..."
+          # 列出 ios 目录下的所有文件和文件夹，并递归查找 .xcworkspace
+          ls -R ios/
+
+          # 寻找 .xcworkspace 结尾的文件路径
+          find ios -name "*.xcworkspace"
+
       - name: Build iOS archive (unsigned)
         run: |
           RAW_NAME=$(jq -r .name package.json)

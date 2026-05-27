@@ -42,13 +42,14 @@ jobs:
       - name: Build iOS archive (unsigned)
         run: |
           RAW_NAME=$(jq -r .name package.json)
+          SAFE_NAME=$(echo $RAW_NAME | tr -cd '[:alnum:]_')
 
           xcodebuild \
-            -workspace ios/$RAW_NAME.xcworkspace \
-            -scheme $RAW_NAME \
+            -workspace ios/$SAFE_NAME.xcworkspace \
+            -scheme $SAFE_NAME \
             -configuration Debug clean archive \
             -sdk iphoneos \
-            -archivePath build/$RAW_NAME.xcarchive \
+            -archivePath build/$SAFE_NAME.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY=""
@@ -56,15 +57,16 @@ jobs:
       - name: Export IPA
         run: |
           RAW_NAME=$(jq -r .name package.json)
+          SAFE_NAME=$(echo $RAW_NAME | tr -cd '[:alnum:]_')
 
-          cd build/$RAW_NAME.xcarchive/Products/Applications
+          cd build/$SAFE_NAME.xcarchive/Products/Applications
           mkdir -p Payload
-          cp -r $RAW_NAME.app Payload/
-          zip -r $$RAW_NAME.ipa Payload
-          mv $$RAW_NAME.ipa $GITHUB_WORKSPACE/
+          cp -r $SAFE_NAME.app Payload/
+          zip -r $$SAFE_NAME.ipa Payload
+          mv $$SAFE_NAME.ipa $GITHUB_WORKSPACE/
 
       - name: Upload .ipa
         uses: actions/upload-artifact@v4
         with:
-          name: $RAW_NAME-ios-onsign
-          path: ios/$RAW_NAME.ipa
+          name: $SAFE_NAME-ios-onsign
+          path: ios/$SAFE_NAME.ipa

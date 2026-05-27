@@ -69,9 +69,6 @@ jobs:
           # 3. 打包
           zip -r solarhezapp.ipa Payload
 
-          # 4. 移动到根目录
-          mv solarhezapp.ipa $GITHUB_WORKSPACE/
-
       - name: Upload .ipa
         uses: actions/upload-artifact@v4
         with:

@@ -16,10 +16,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Install Expo & dependencies
         run: |
-          npm install -g expo
-          npm ci
+          pnpm install --frozen-lockfile
 
       - name: Add expo-dev-client
         run: npx expo install expo-dev-client

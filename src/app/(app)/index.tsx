@@ -75,11 +75,13 @@ export default function HomeScreen() {
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
       stickyHeaderIndices={[0]}
+      contentContainerStyle={{ paddingBottom: insets.bottom }}
+      automaticallyAdjustContentInsets={false}
     >
       <StyledBlurView
         intensity={90}
         tint={colorScheme === "dark" ? "dark" : "light"}
-        className={`p-2 ${Platform.OS === "ios" ? "" : "bg-card"}`}
+        className={`p-2 gap-2 ${Platform.OS === "ios" ? "" : "bg-card"}`}
       >
         <View
           style={{
@@ -89,10 +91,7 @@ export default function HomeScreen() {
         <HeaderTitle user={user} listLength={listLength} />
         <SearchInput searchText={searchText} setSearchText={setSearchText} />
       </StyledBlurView>
-      <Animated.View
-        entering={FadeInDown.duration(1500)}
-        className="py-4 px-2 gap-2"
-      >
+      <Animated.View entering={FadeInDown.duration(1500)} className="py-4 px-2">
         {filteredRoomList?.map((room) => (
           <RoomItem room={room} key={room.room_url} />
         ))}

@@ -45,8 +45,17 @@ export default function AddRoomScreen() {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View className="bg-card px-4" style={{ paddingTop: insets.top }}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: insets.bottom }}
+      automaticallyAdjustContentInsets={false}
+    >
+      <View className="bg-card px-4">
+        <View
+          style={{
+            height: insets.top,
+          }}
+        ></View>
         <View className="flex-row items-center gap-2 h-14">
           <StyledIonicons
             name="add-circle"

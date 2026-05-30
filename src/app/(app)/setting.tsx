@@ -62,7 +62,7 @@ export default function SettingsScreen() {
   return (
     <View className="flex-1">
       <SafeAreaView className="flex-1">
-        <ScrollView className="p-4">
+        <ScrollView className="p-4" automaticallyAdjustContentInsets={false}>
           <View className="flex-row items-center gap-4 p-4 rounded-full bg-card shadow-xs border border-background/20 my-10">
             <Image
               source={{

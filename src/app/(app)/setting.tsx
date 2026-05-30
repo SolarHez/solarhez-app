@@ -68,7 +68,7 @@ export default function SettingsScreen() {
               source={{
                 uri: user?.image || `https://github.com/shadcn.png`,
               }}
-              borderRadius={20}
+              borderRadius={100}
               className="border-2 border-foreground/20 w-20 h-20 rounded-full"
             />
             <View>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { RoomListResponse } from "./type";
+import { RoomList, RoomListResponse } from "./type";
 
 const authClient = axios.create({
   baseURL: "https://live.not7.cc/api/",
@@ -50,4 +50,15 @@ async function deleteRoomSate(
   }
 }
 
-export { deleteRoomSate, toggleRoomSate };
+async function addRoomSate(roomData: RoomList) {
+  try {
+    const { data } = await authClient.post("room/add", roomData);
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    return {};
+  }
+}
+
+export { addRoomSate, deleteRoomSate, toggleRoomSate };

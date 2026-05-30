@@ -45,4 +45,5 @@ export type RoomList = {
   last_notified_at?: string;
   created_at?: string;
   updated_at?: string;
+  roomExists?: boolean;
 };

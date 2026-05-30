@@ -10,8 +10,12 @@ import {
   RefreshControl,
   TextInput,
   useColorScheme,
+  Platform,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { calculateLiveDuration, formatTimestamp } from "@/utils/time";
 import { styled } from "nativewind";
@@ -27,6 +31,7 @@ const StyledBlurView = styled(BlurView as any);
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
   const roomList = useDataStore((state) => state.roomList);
   const getRoomList = useDataStore((state) => state.getRoomList);
   const user = useAuthStore((state) => state.user);
@@ -64,32 +69,35 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-        stickyHeaderIndices={[0]}
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+      stickyHeaderIndices={[0]}
+    >
+      <StyledBlurView
+        intensity={90}
+        tint={colorScheme === "dark" ? "dark" : "light"}
+        className={`p-2 ${Platform.OS === "ios" ? "" : "bg-card"}`}
       >
-        <StyledBlurView
-          intensity={90}
-          tint={colorScheme === "dark" ? "dark" : "light"}
-          className="p-2"
-        >
-          <HeaderTitle user={user} listLength={listLength} />
-          <SearchInput searchText={searchText} setSearchText={setSearchText} />
-        </StyledBlurView>
-        <Animated.View
-          entering={FadeInDown.duration(1500)}
-          className="py-4 px-2"
-        >
-          {filteredRoomList?.map((room) => (
-            <RoomItem room={room} key={room.room_id} />
-          ))}
-        </Animated.View>
-      </ScrollView>
-    </SafeAreaView>
+        <View
+          style={{
+            height: insets.top,
+          }}
+        ></View>
+        <HeaderTitle user={user} listLength={listLength} />
+        <SearchInput searchText={searchText} setSearchText={setSearchText} />
+      </StyledBlurView>
+      <Animated.View
+        entering={FadeInDown.duration(1500)}
+        className="py-4 px-2 gap-2"
+      >
+        {filteredRoomList?.map((room) => (
+          <RoomItem room={room} key={room.room_url} />
+        ))}
+      </Animated.View>
+    </ScrollView>
   );
 }
 
@@ -158,7 +166,7 @@ const RoomItem = ({ room }: { room: any }) => {
   return (
     <View
       key={room.id}
-      className=" p-4 m-1 rounded-4xl  bg-background border border-foreground/10 gap-2 shadow-xs"
+      className=" p-4 m-1 rounded-4xl  bg-card border border-foreground/10 gap-2 shadow-xs"
     >
       <View className="flex-row items-center gap-4">
         <Image

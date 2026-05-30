@@ -1,65 +1,69 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-import '@/global.css';
-
-import { Platform } from 'react-native';
-
-export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+export const Themes = {
+  DarkTheme: {
+    "--color-background": "rgba(37, 37, 37, 1)",
+    "--color-foreground": "rgba(250, 250, 250, 1)",
+    "--color-card": "rgba(52, 52, 52, 1)",
+    "--color-card-foreground": "rgba(250, 250, 250, 1)",
+    "--color-popover": "rgba(52, 52, 52, 1)",
+    "--color-popover-foreground": "rgba(250, 250, 250, 1)",
+    "--color-primary": "rgba(52, 52, 52, 1)",
+    "--color-primary-foreground": "rgba(52, 52, 52, 1)",
+    "--color-secondary": "rgba(69, 69, 69, 1)",
+    "--color-secondary-foreground": "rgba(250, 250, 250, 1)",
+    "--color-muted": "rgba(69, 69, 69, 1)",
+    "--color-muted-foreground": "rgba(181, 181, 181, 1)",
+    "--color-accent": "rgba(69, 69, 69, 1)",
+    "--color-accent-foreground": "rgba(250, 250, 250, 1)",
+    "--color-destructive": "rgba(202, 73, 58, 1)",
+    "--color-border": "rgba(255, 255, 255, 0.1)",
+    "--color-input": "rgba(255, 255, 255, 0.15)",
+    "--color-ring": "rgba(142, 142, 142, 1)",
+    "--color-chart-1": "rgba(223, 223, 223, 1)",
+    "--color-chart-2": "rgba(142, 142, 142, 1)",
+    "--color-chart-3": "rgba(112, 112, 112, 1)",
+    "--color-chart-4": "rgba(95, 95, 95, 1)",
+    "--color-chart-5": "rgba(69, 69, 69, 1)",
+    "--color-sidebar": "rgba(52, 52, 52, 1)",
+    "--color-sidebar-foreground": "rgba(250, 250, 250, 1)",
+    "--color-sidebar-primary": "rgba(127, 95, 224, 1)",
+    "--color-sidebar-primary-foreground": "rgba(250, 250, 250, 1)",
+    "--color-sidebar-accent": "rgba(69, 69, 69, 1)",
+    "--color-sidebar-accent-foreground": "rgba(250, 250, 250, 1)",
+    "--color-sidebar-border": "rgba(255, 255, 255, 0.1)",
+    "--color-sidebar-ring": "rgba(142, 142, 142, 1)",
   },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+  DefaultTheme: {
+    "--color-background": "rgba(255, 255, 255, 1)",
+    "--color-foreground": "rgba(37, 37, 37, 1)",
+    "--color-card": "rgba(255, 255, 255, 1)",
+    "--color-card-foreground": "rgba(37, 37, 37, 1)",
+    "--color-popover": "rgba(255, 255, 255, 1)",
+    "--color-popover-foreground": "rgba(37, 37, 37, 1)",
+    "--color-primary": "rgba(235, 235, 235, 1)",
+    "--color-primary-foreground": "rgba(250, 250, 250, 1)",
+    "--color-secondary": "rgba(245, 245, 245, 1)",
+    "--color-secondary-foreground": "rgba(52, 52, 52, 1)",
+    "--color-muted": "rgba(245, 245, 245, 1)",
+    "--color-muted-foreground": "rgba(142, 142, 142, 1)",
+    "--color-accent": "rgba(245, 245, 245, 1)",
+    "--color-accent-foreground": "rgba(52, 52, 52, 1)",
+    "--color-destructive": "rgba(215, 77, 49, 1)",
+    "--color-border": "rgba(235, 235, 235, 1)",
+    "--color-input": "rgba(235, 235, 235, 1)",
+    "--color-ring": "rgba(181, 181, 181, 1)",
+    "--color-chart-1": "rgba(223, 223, 223, 1)",
+    "--color-chart-2": "rgba(142, 142, 142, 1)",
+    "--color-chart-3": "rgba(112, 112, 112, 1)",
+    "--color-chart-4": "rgba(95, 95, 95, 1)",
+    "--color-chart-5": "rgba(69, 69, 69, 1)",
+    "--color-radius": "0.625rem",
+    "--color-sidebar": "rgba(250, 250, 250, 1)",
+    "--color-sidebar-foreground": "rgba(37, 37, 37, 1)",
+    "--color-sidebar-primary": "rgba(52, 52, 52, 1)",
+    "--color-sidebar-primary-foreground": "rgba(250, 250, 250, 1)",
+    "--color-sidebar-accent": "rgba(245, 245, 245, 1)",
+    "--color-sidebar-accent-foreground": "rgba(52, 52, 52, 1)",
+    "--color-sidebar-border": "rgba(235, 235, 235, 1)",
+    "--color-sidebar-ring": "rgba(181, 181, 181, 1)",
   },
-} as const;
-
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
-
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
-
-export const Spacing = {
-  half: 2,
-  one: 4,
-  two: 8,
-  three: 16,
-  four: 24,
-  five: 32,
-  six: 64,
-} as const;
-
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
+};

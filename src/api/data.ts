@@ -35,4 +35,18 @@ async function getRoomInfo(id: string, p: string) {
   }
 }
 
-export { getRoomInfo, getRoomList };
+async function getEmail(uid: string) {
+  try {
+    const { data } = await authClient.get("mail/get", {
+      params: {
+        uid,
+      },
+    });
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export { getEmail, getRoomInfo, getRoomList };

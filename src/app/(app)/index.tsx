@@ -1,5 +1,5 @@
 import { useDataStore } from "@/stores/dataStore";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Text,
@@ -8,24 +8,44 @@ import {
   ScrollView,
   Switch,
   RefreshControl,
+  TextInput,
+  useColorScheme,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { calculateLiveDuration, formatTimestamp } from "@/utils/time";
 import { styled } from "nativewind";
 import { useAuthStore } from "@/stores";
-import Animated, { FadeInUp } from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { useActionStore } from "@/stores/actionStore";
+import { Link } from "expo-router";
+import { BlurView } from "expo-blur";
 
 const StyledMaterialIcons = styled(MaterialIcons);
 const StyledIonicons = styled(Ionicons);
+const StyledBlurView = styled(BlurView as any);
 
 export default function HomeScreen() {
+  const colorScheme = useColorScheme();
   const roomList = useDataStore((state) => state.roomList);
   const getRoomList = useDataStore((state) => state.getRoomList);
   const user = useAuthStore((state) => state.user);
   const listLength = roomList?.length || 0;
   const [refreshing, setRefreshing] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const filteredRoomList = useMemo(() => {
+    if (!searchText) {
+      return roomList;
+    }
+    return roomList.filter((room: any) => {
+      const searchLower = searchText.toLowerCase();
+      const nameMatch = room.name?.toLowerCase().includes(searchLower);
+      const ridMatch = room.room_id?.toLowerCase().includes(searchLower);
+
+      return nameMatch || ridMatch; // 名字匹配 或者 ID 匹配 都可以
+    });
+  }, [searchText, roomList]);
 
   useEffect(() => {
     getRoomList();
@@ -44,26 +64,32 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView
-      contentContainerClassName="p-2"
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          progressViewOffset={100}
-        />
-      }
-    >
-      <SafeAreaView>
-        <Animated.View entering={FadeInUp.duration(500)}>
+    <SafeAreaView>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+        stickyHeaderIndices={[0]}
+      >
+        <StyledBlurView
+          intensity={90}
+          tint={colorScheme === "dark" ? "dark" : "light"}
+          className="p-2"
+        >
           <HeaderTitle user={user} listLength={listLength} />
-          {roomList.map((room) => (
-            <RoomItem room={room} key={room.id} />
+          <SearchInput searchText={searchText} setSearchText={setSearchText} />
+        </StyledBlurView>
+        <Animated.View
+          entering={FadeInDown.duration(1500)}
+          className="py-4 px-2"
+        >
+          {filteredRoomList?.map((room) => (
+            <RoomItem room={room} key={room.room_id} />
           ))}
         </Animated.View>
-      </SafeAreaView>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -82,16 +108,44 @@ const HeaderTitle = ({
           共 {listLength} 个直播间
         </Text>
       </View>
-      <View>
-        <Image
-          source={{
-            uri: user?.image || `https://github.com/shadcn.png`,
-          }}
-          style={{ width: 40, height: 40 }}
-          borderRadius={20}
-          className="border-2 border-foreground/20"
-        />
-      </View>
+      <Link href="/setting">
+        <View>
+          <Image
+            source={{
+              uri: user?.image || `https://github.com/shadcn.png`,
+            }}
+            style={{ width: 40, height: 40 }}
+            borderRadius={20}
+            className="border-2 border-foreground/20"
+          />
+        </View>
+      </Link>
+    </View>
+  );
+};
+
+const SearchInput = ({
+  searchText,
+  setSearchText,
+}: {
+  searchText: string;
+  setSearchText: (text: string) => void;
+}) => {
+  return (
+    <View className="flex-row items-center  px-4 bg-card/50 rounded-2xl  mx-2 border border-foreground/10 transition-all duration-300">
+      <Ionicons
+        name="search"
+        size={20}
+        className="mr-3 text-muted-foreground"
+      />
+      <TextInput
+        className="flex-1 py-4 text-foreground placeholder:text-muted-foreground"
+        placeholder="搜索直播间"
+        autoCapitalize="none"
+        keyboardType="email-address"
+        value={searchText}
+        onChangeText={setSearchText}
+      />
     </View>
   );
 };
@@ -129,7 +183,9 @@ const RoomItem = ({ room }: { room: any }) => {
                 {room.is_live == true ? "直播中" : "未直播"}
               </Text>
             </View>
-            <Text className="text-foreground/50 text-sm ">{room.platform}</Text>
+            <Text className="text-muted-foreground text-sm ">
+              {room.platform}
+            </Text>
           </View>
           <View>
             <Switch
@@ -139,25 +195,25 @@ const RoomItem = ({ room }: { room: any }) => {
                 await toggleRoomSate(room.room_id, room.platform, value);
                 await getRoomList();
               }}
-              trackColor={{ false: "#3f3f46", true: "green" }}
-              thumbColor={isJoined ? "#ffffff" : "#a1a1aa"}
+              trackColor={{ false: "gray", true: "green" }}
+              thumbColor={isJoined ? "#ffffff" : "#ffffff"}
             />
           </View>
         </View>
       </View>
       <View className="flex-row items-center justify-between gap-4">
-        <Text className="text-foreground font-bold">{room.title}</Text>
+        <Text className="text-foreground font-bold px-2">{room.title}</Text>
         <StyledMaterialIcons
           name="delete-outline"
           size={20}
-          className="text-foreground/50"
+          className="text-muted-foreground"
           onPress={async () => {
             await deleteRoomSate(room.room_id, room.platform);
             await getRoomList();
           }}
         />
       </View>
-      <View className="bg-foreground/5 rounded-2xl py-6 px-4 gap-3">
+      <View className="bg-muted rounded-2xl py-6 px-4 gap-3">
         <View className="flex-row items-center gap-1">
           <StyledIonicons
             name="time-outline"

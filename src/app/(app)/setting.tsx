@@ -2,60 +2,115 @@ import { useAuth } from "@/hooks/useAuth";
 import {
   View,
   ScrollView,
-  Pressable,
   Alert,
   Text,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "@/stores";
+import { styled } from "nativewind";
+import appJson from "../../../app.json";
+import { useDataStore } from "@/stores/dataStore";
+import { useEffect } from "react";
+
+const StyledIonicons = styled(Ionicons);
 
 // 自定义设置项组件
-const SettingItem = ({ title, icon, onPress, isDestructive = false }: any) => (
+const SettingItem = ({
+  title,
+  icon,
+  onPress,
+  isDestructive = false,
+  children = null,
+}: any) => (
   <TouchableOpacity
     onPress={onPress}
     className="flex-row items-center justify-between p-4 active:bg-accent"
   >
     <View className="flex-row items-center gap-3">
-      <Ionicons
+      <StyledIonicons
         name={icon}
         size={22}
-        color={isDestructive ? "#ef4444" : "#6b7280"}
+        className={isDestructive ? "text-destructive" : "text-muted-foreground"}
       />
-      <Text className={isDestructive ? "text-red-500" : "text-foreground"}>
-        {title}
-      </Text>
+      <View className="flex-row justify-between flex-1">
+        <Text
+          className={isDestructive ? "text-destructive" : "text-foreground"}
+        >
+          {title}
+        </Text>
+        <Text className="text-foreground/50">{children}</Text>
+      </View>
+      <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
     </View>
-    <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
   </TouchableOpacity>
 );
 
 export default function SettingsScreen() {
   const { signOut } = useAuth();
   const user = useAuthStore((state) => state.user);
+  const email = useDataStore((state) => state.email);
+  const getEmail = useDataStore((state) => state.getEmail);
+  const version = appJson.expo.version;
+
+  useEffect(() => {
+    getEmail(user?.id || "");
+  }, [user?.id]);
 
   return (
     <View className="flex-1">
       <SafeAreaView className="flex-1">
         <ScrollView className="p-4">
-          <Text className="mb-6 text-4xl font-bold text-foreground">设置</Text>
-
-          {/* 账户模块 */}
-          <Text className="mb-2 text-foreground">个人账户</Text>
-          <View className="mb-6 bg-card rounded-xl shadow-xs overflow-clip">
-            <SettingItem
-              title={user?.name || "未登录"}
-              icon="person-circle-outline"
+          <View className="flex-row items-center gap-4 p-4 rounded-full bg-card shadow-xs border border-background/20 my-10">
+            <Image
+              source={{
+                uri: user?.image || `https://github.com/shadcn.png`,
+              }}
+              borderRadius={20}
+              className="border-2 border-foreground/20 w-20 h-20 rounded-full"
             />
-            <SettingItem title="修改密码" icon="lock-closed-outline" />
+            <View>
+              <Text className="text-2xl font-bold text-foreground">
+                {user?.name || "未登录"}
+              </Text>
+              <View className="flex-row justify-center items-center gap-1">
+                <StyledIonicons
+                  name="mail-outline"
+                  size={15}
+                  className="text-muted-foreground"
+                />
+                <Text className="text-muted-foreground">
+                  {user?.email || "未绑定邮箱"}
+                </Text>
+              </View>
+            </View>
           </View>
 
           {/* 通用模块 */}
-          <Text className="mb-2 text-foreground">偏好设置</Text>
+          <Text className="mb-2 text-foreground">APP设置</Text>
           <View className="mb-6 bg-card rounded-xl shadow-xs overflow-clip">
-            <SettingItem title="通知提醒" icon="notifications-outline" />
-            <SettingItem title="关于我们" icon="information-circle-outline" />
+            <SettingItem
+              title="通知提醒"
+              icon="notifications-outline"
+              children={email || "未绑定邮箱"}
+            />
+            <SettingItem
+              title="主题切换"
+              icon="color-palette-outline"
+              children="跟随系统"
+            />
+          </View>
+
+          <Text className="mb-2 text-foreground">其他</Text>
+          <View className="mb-6 bg-card rounded-xl shadow-xs overflow-clip">
+            <SettingItem title="检查更新" icon="arrow-up-circle-outline" />
+            <SettingItem
+              title="版本号"
+              icon="information-circle-outline"
+              children={version}
+            />
           </View>
 
           <View className="mb-6 bg-card rounded-xl shadow-xs overflow-clip">
